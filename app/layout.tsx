@@ -1,23 +1,25 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { JetBrains_Mono, Sora } from "next/font/google"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { Providers } from "@/components/Providers"
 import AppShell from "@/components/AppShell"
 import "./globals.css"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const sora = Sora({
   subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["300", "400", "500", "600"],
 })
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400"],
 })
 
 export const metadata: Metadata = {
-  title: "Cover Letter Gen",
+  title: "WriteNow",
   description: "Generate tailored cover letters with your resume and AI research.",
 }
 
@@ -31,9 +33,9 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${sora.variable} ${jetbrains.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
+      <body className={`${sora.className} min-h-full flex flex-col`}>
         <Providers session={session}>
           <AppShell>{children}</AppShell>
         </Providers>
