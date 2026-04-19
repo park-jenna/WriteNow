@@ -32,6 +32,7 @@ function normalizeNotionDatabaseId(raw: string): string {
 }
 
 function notionProperties(
+  userEmail: string,
   jobTitle: string,
   companyName: string,
   driveUrl: string | null
@@ -42,6 +43,9 @@ function notionProperties(
     },
     Company: {
       rich_text: [{ text: { content: companyName } }],
+    },
+    Email: {
+      email: userEmail,
     },
     Date: {
       date: { start: new Date().toISOString().split("T")[0] },
@@ -57,10 +61,12 @@ function notionProperties(
 }
 
 export async function logToNotion({
+  userEmail,
   jobTitle,
   companyName,
   driveUrl,
 }: {
+  userEmail: string
   jobTitle: string
   companyName: string
   driveUrl: string | null
@@ -82,7 +88,7 @@ export async function logToNotion({
     },
     body: JSON.stringify({
       parent: { database_id: databaseId },
-      properties: notionProperties(jobTitle, companyName, driveUrl),
+      properties: notionProperties(userEmail, jobTitle, companyName, driveUrl),
     }),
   })
 

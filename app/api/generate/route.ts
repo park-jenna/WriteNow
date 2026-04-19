@@ -106,7 +106,12 @@ export async function POST(req: NextRequest) {
 
   let notionUrl: string | null = null
   try {
-    notionUrl = await logToNotion({ jobTitle, companyName, driveUrl })
+    notionUrl = await logToNotion({
+      userEmail: session.user.email,
+      jobTitle,
+      companyName,
+      driveUrl,
+    })
   } catch (err) {
     console.error("Notion log failed:", err)
     const msg = err instanceof Error ? err.message : String(err)

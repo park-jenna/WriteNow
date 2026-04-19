@@ -62,6 +62,7 @@ create table users (
 3. Create a new Notion database with these fields:
    - Job Title (title field)
    - Company (text)
+   - Email (email)
    - Date (date)
    - Drive Link (URL)
    - Status (select)
@@ -86,8 +87,8 @@ ANTHROPIC_API_KEY=your-anthropic-api-key
 NOTION_MCP_TOKEN=your-notion-integration-token
 NOTION_DATABASE_ID=your-notion-database-id
 
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+NEXT_PUBLIC_SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
 ```
 
 Generate a NEXTAUTH_SECRET with:
