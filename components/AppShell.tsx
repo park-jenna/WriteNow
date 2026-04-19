@@ -10,7 +10,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       {showHeader && <Header />}
-      {children}
+      <div className={showHeader ? "pt-14" : ""}>{children}</div>
     </>
   )
 }

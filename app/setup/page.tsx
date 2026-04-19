@@ -51,27 +51,39 @@ export default function SetupPage() {
 
   return (
     <main className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 py-10">
-      <div className="flex w-full max-w-md flex-col gap-4 rounded-xl border border-border bg-card p-10 shadow-sm">
-        <h1 className="text-xl font-semibold">Set up your resume</h1>
-        <p className="text-sm text-muted-foreground">
-          Paste the Google Drive link to your resume. This is saved once and used for every
-          generation.
+      <div className="glass-card w-full max-w-[460px] p-10">
+        <p
+          className="mb-3 text-[0.7rem] uppercase tracking-[0.08em]"
+          style={{ color: "var(--text-muted)" }}
+        >
+          One-time setup
         </p>
+        <h1 className="mb-2.5 text-xl font-semibold">Connect your resume</h1>
+        <p className="mb-7 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+          Paste your Google Drive file link. Your resume is fetched fresh every time you generate a
+          letter.
+        </p>
+
+        <label className="field-label">Google Drive URL</label>
         <input
           type="text"
           placeholder="https://drive.google.com/file/d/..."
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+          className="glass-input font-mono text-xs"
         />
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {error && (
+          <p className="mt-2 text-sm" style={{ color: "var(--error)" }}>
+            {error}
+          </p>
+        )}
         <button
           type="button"
+          className="btn-primary mt-5"
           onClick={handleSubmit}
           disabled={loading || !url}
-          className="rounded-lg bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-50"
         >
-          {loading ? "Saving..." : "Save and continue"}
+          {loading ? "Saving…" : "Save and continue"}
         </button>
       </div>
     </main>

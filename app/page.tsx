@@ -6,7 +6,11 @@ import HomeForm from "@/components/HomeForm"
 
 export const dynamic = "force-dynamic"
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email) {
     redirect("/login")
@@ -17,5 +21,11 @@ export default async function HomePage() {
     redirect("/setup")
   }
 
-  return <HomeForm />
+  const params = await searchParams
+  const inputError =
+    params.error === "no-input"
+      ? "No application details found. Fill out the form and try again."
+      : undefined
+
+  return <HomeForm inputError={inputError} />
 }
