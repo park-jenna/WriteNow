@@ -27,7 +27,8 @@ export default function HomeForm({ inputError }: { inputError?: string }) {
           New application
         </h1>
         <p className="mb-8 text-sm" style={{ color: "var(--text-secondary)" }}>
-          Fill in the details and WriteNow handles the rest.
+        Fill in the details below. WriteNow will research the company, 
+        write a tailored cover letter, and save it to your Google Drive.
         </p>
 
         {inputError && (

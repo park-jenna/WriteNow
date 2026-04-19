@@ -20,6 +20,17 @@ export default function LoginForm() {
         <p className="mb-8 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
           Generate tailored cover letters in seconds.
         </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "28px" }}>
+  {[
+    "✦  Reads your resume from Google Drive",
+    "✦  Researches the company automatically",
+    "✦  Saves the letter back to your Drive",
+  ].map((item) => (
+    <p key={item} style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+      {item}
+    </p>
+  ))}
+</div>
 
         <button type="button" className="btn-primary" onClick={() => signIn("google", { callbackUrl: "/" })}>
           Continue with Google

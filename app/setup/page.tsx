@@ -72,6 +72,14 @@ export default function SetupPage() {
           onChange={(e) => setUrl(e.target.value)}
           className="glass-input font-mono text-xs"
         />
+        <p
+          className="mt-2 text-[0.7rem] leading-relaxed"
+          style={{ color: "var(--text-muted)" }}
+        >
+          Make sure your file is shared as &quot;Anyone with the link can view.&quot;
+          <br />
+          Supported formats: Google Docs, DOCX, PDF.
+        </p>
         {error && (
           <p className="mt-2 text-sm" style={{ color: "var(--error)" }}>
             {error}
