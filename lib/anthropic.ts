@@ -54,6 +54,16 @@ export async function generateCoverLetter({
         role: "user",
         content: `You are writing a professional cover letter.
 
+        IMPORTANT RULES:
+        - Only mention experiences, skills, and projects that appear in the resume
+        - Never invent or assume anything not in the resume
+        - If direct experience is missing, look for transferable skills:
+            * Relevant coursework or academic projects
+            * Personal or side projects using similar technologies
+            * Soft skills demonstrated through any experience (teamwork, problem solving, etc.)
+            * Internships or part-time work showing work ethic or initiative
+        - If the applicant is a student or early-career, frame the letter around potential and eagerness to contribute rather than years of experience
+
 Job Title: ${jobTitle}
 Company: ${companyName}
 Company Research: ${companyResearch}
@@ -68,6 +78,7 @@ Write a cover letter that:
 - Closes with a clear call to action
 - Uses a professional but conversational tone
 - Is 3-4 paragraphs, no longer
+- Use the company research to explain why the applicant is interested in this specific company
 
 Start your response directly with "Dear Hiring Manager," and nothing before it.
 
