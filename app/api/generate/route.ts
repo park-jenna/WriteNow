@@ -49,6 +49,8 @@ export async function POST(req: NextRequest) {
     researchCompany(companyName),
   ])
 
+
+
   if (resumeOutcome.status === "rejected") {
     console.error("Resume fetch failed:", resumeOutcome.reason)
     return NextResponse.json(
@@ -74,6 +76,9 @@ export async function POST(req: NextRequest) {
 
   const resumeText = resumeOutcome.value
   const companyResearch = researchOutcome.value
+
+  console.log("RESUME LENGTH:", resumeText?.length)
+  console.log("RESUME PREVIEW:", resumeText?.slice(0, 300))
 
   let coverLetter: string
   try {
