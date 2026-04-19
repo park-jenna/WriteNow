@@ -2,9 +2,9 @@ import Anthropic from "@anthropic-ai/sdk"
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-/** Override with ANTHROPIC_MODEL in .env.local if your org uses a different ID. */
+/** Override with ANTHROPIC_MODEL in .env.local (e.g. claude-sonnet-4-6). */
 const CLAUDE_MODEL =
-  process.env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-4-20250514"
+  process.env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-4-5-20250929"
 
 export async function researchCompany(companyName: string): Promise<string> {
   const message = await client.messages.create({
