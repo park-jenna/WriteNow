@@ -4,7 +4,7 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 /** Override with ANTHROPIC_MODEL in .env.local if your org uses a different ID. */
 const CLAUDE_MODEL =
-  process.env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-4-5-20250929"
+  process.env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-4-20250514"
 
 export async function researchCompany(companyName: string): Promise<string> {
   const message = await client.messages.create({
