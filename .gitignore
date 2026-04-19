@@ -32,10 +32,18 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
+
+# Internal product notes (keep locally; not part of the shipped app)
+API_SPEC.md
+BACKEND.md
+DESIGN.md
+FRONTEND.md
+IMPLEMENTATION_PLAN.md
+UX_FLOW.md
