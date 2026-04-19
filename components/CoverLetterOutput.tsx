@@ -1,60 +1,72 @@
 import Link from "next/link"
 
 export default function CoverLetterOutput({
+  jobTitle,
+  companyName,
   coverLetter,
   driveUrl,
   notionUrl,
   warnings,
 }: {
+  jobTitle: string
+  companyName: string
   coverLetter: string
   driveUrl: string | null
   notionUrl: string | null
   warnings: string[]
 }) {
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold">Your cover letter is ready</h1>
+    <div className="w-full max-w-[680px] px-6 py-6">
+      <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+        <div>
+          <p
+            className="mb-1 text-[0.7rem] uppercase tracking-[0.08em]"
+            style={{ color: "var(--text-muted)" }}
+          >
+            Cover Letter
+          </p>
+          <h1 className="text-xl font-semibold tracking-tight" style={{ letterSpacing: "-0.02em" }}>
+            {jobTitle} at {companyName}
+          </h1>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {driveUrl && (
+            <a href={driveUrl} target="_blank" rel="noopener noreferrer" className="btn-ghost">
+              Open in Drive
+            </a>
+          )}
+          <Link href="/" className="btn-ghost">
+            Generate another
+          </Link>
+        </div>
+      </div>
 
       {warnings.length > 0 && (
-        <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800 dark:border-yellow-900/60 dark:bg-yellow-950/40 dark:text-yellow-200">
+        <div
+          className="glass-card mb-5 border px-4 py-3 text-sm"
+          style={{ borderColor: "rgba(251, 191, 36, 0.35)", color: "var(--warning)" }}
+        >
           {warnings.map((w, i) => (
             <p key={i}>{w}</p>
           ))}
         </div>
       )}
 
-      <div className="rounded-xl border border-border bg-card p-6 font-serif text-sm leading-relaxed whitespace-pre-wrap text-card-foreground">
+      <div
+        className="glass-card-strong letter-body whitespace-pre-wrap text-[0.9rem] leading-[1.85]"
+        style={{ color: "var(--text-primary)" }}
+      >
         {coverLetter}
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        {driveUrl && (
-          <a
-            href={driveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-lg border border-border px-4 py-2 text-sm transition-colors hover:bg-accent"
-          >
-            Open in Drive
-          </a>
-        )}
-        {notionUrl && (
-          <a
-            href={notionUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-lg border border-border px-4 py-2 text-sm transition-colors hover:bg-accent"
-          >
-            View in Notion
-          </a>
-        )}
-        <Link
-          href="/"
-          className="rounded-lg border border-border px-4 py-2 text-sm transition-colors hover:bg-accent"
-        >
-          Generate another
-        </Link>
-      </div>
+      {notionUrl && (
+        <div className="mt-3.5 flex justify-end">
+          <p className="text-[0.72rem]" style={{ color: "var(--text-muted)" }}>
+            ✓ Logged to Notion &nbsp;·&nbsp;
+            <span className="text-xs">Per-user Notion workspaces coming soon</span>
+          </p>
+        </div>
+      )}
     </div>
   )
 }

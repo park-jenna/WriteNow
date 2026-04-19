@@ -13,14 +13,24 @@ const INITIAL_STEPS: Step[] = [
   { label: "Logging to Notion", status: "pending" },
 ]
 
+type FormInput = {
+  jobTitle: string
+  companyName: string
+  jobDescription: string
+  personalNote: string
+}
+
 export default function GeneratePage() {
   const router = useRouter()
   const [steps, setSteps] = useState<Step[]>(INITIAL_STEPS)
+  const [meta, setMeta] = useState<{ jobTitle: string; companyName: string } | null>(null)
   const [result, setResult] = useState<{
     coverLetter: string
     driveUrl: string | null
     notionUrl: string | null
     warnings: string[]
+    jobTitle: string
+    companyName: string
   } | null>(null)
   const [error, setError] = useState("")
   const [setupHint, setSetupHint] = useState(false)
@@ -35,17 +45,24 @@ export default function GeneratePage() {
     async function run() {
       const raw = sessionStorage.getItem("generateInput")
       if (!raw) {
-        setError("No input found. Please go back and fill out the form.")
+        router.push("/?error=no-input")
         return
       }
 
-      let input: Record<string, string>
+      let input: FormInput
       try {
-        input = JSON.parse(raw) as Record<string, string>
+        input = JSON.parse(raw) as FormInput
       } catch {
         setError("Invalid form data. Please go back and try again.")
         return
       }
+
+      if (!input.jobTitle || !input.companyName) {
+        router.push("/?error=no-input")
+        return
+      }
+
+      setMeta({ jobTitle: input.jobTitle, companyName: input.companyName })
 
       updateStep(0, "running")
       updateStep(1, "running")
@@ -94,6 +111,8 @@ export default function GeneratePage() {
         driveUrl: data.driveUrl ?? null,
         notionUrl: data.notionUrl ?? null,
         warnings: data.warnings ?? [],
+        jobTitle: input.jobTitle,
+        companyName: input.companyName,
       })
     }
 
@@ -101,23 +120,21 @@ export default function GeneratePage() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [router])
 
   if (error) {
     return (
       <main className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 py-10">
-        <div className="flex max-w-md flex-col items-center gap-3 text-center">
-          <p className="text-sm text-red-500">{error}</p>
+        <div className="glass-card flex max-w-md flex-col items-center gap-3 p-8 text-center">
+          <p className="text-sm" style={{ color: "var(--error)" }}>
+            {error}
+          </p>
           {setupHint && (
-            <a href="/setup" className="text-sm underline">
+            <a href="/setup" className="btn-ghost text-xs">
               Configure your resume
             </a>
           )}
-          <button
-            type="button"
-            onClick={() => router.push("/")}
-            className="text-sm underline"
-          >
+          <button type="button" className="btn-ghost text-xs" onClick={() => router.push("/")}>
             Go back
           </button>
         </div>
@@ -129,12 +146,27 @@ export default function GeneratePage() {
     <main className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 py-10">
       <div className="w-full max-w-2xl">
         {!result ? (
-          <div className="flex flex-col gap-6">
-            <h1 className="text-xl font-semibold">Generating your cover letter…</h1>
-            <StepTracker steps={steps} />
+          <div className="mx-auto w-full max-w-[480px] px-6 py-6">
+            <p
+              className="mb-2 text-xs uppercase tracking-[0.06em]"
+              style={{ color: "var(--text-muted)" }}
+            >
+              Generating
+            </p>
+            <h1
+              className="mb-10 text-3xl font-semibold tracking-tight"
+              style={{ letterSpacing: "-0.03em" }}
+            >
+              {meta?.companyName ?? "…"}
+            </h1>
+            <div className="glass-card p-7">
+              <StepTracker steps={steps} />
+            </div>
           </div>
         ) : (
           <CoverLetterOutput
+            jobTitle={result.jobTitle}
+            companyName={result.companyName}
             coverLetter={result.coverLetter}
             driveUrl={result.driveUrl}
             notionUrl={result.notionUrl}
