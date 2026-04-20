@@ -25,12 +25,23 @@ function devPayload(detail: string) {
 }
 
 export async function POST(req: NextRequest) {
+  try {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email || !session.accessToken) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
   }
 
-  const { jobTitle, companyName, jobDescription, personalNote } = await req.json()
+  let body: Record<string, unknown>
+  try {
+    body = (await req.json()) as Record<string, unknown>
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+  }
+
+  const jobTitle = typeof body.jobTitle === "string" ? body.jobTitle : ""
+  const companyName = typeof body.companyName === "string" ? body.companyName : ""
+  const jobDescription = typeof body.jobDescription === "string" ? body.jobDescription : ""
+  const personalNote = typeof body.personalNote === "string" ? body.personalNote : ""
 
   if (!jobTitle || !companyName) {
     return NextResponse.json(
@@ -136,4 +147,14 @@ export async function POST(req: NextRequest) {
     notionUrl,
     warnings,
   })
+  } catch (err) {
+    console.error("POST /api/generate failed:", err)
+    return NextResponse.json(
+      {
+        error: "Unexpected server error",
+        ...devPayload(errDetail(err)),
+      },
+      { status: 500 }
+    )
+  }
 }

@@ -73,13 +73,27 @@ export default function GeneratePage() {
         body: JSON.stringify(input),
       })
 
-      const data = (await res.json()) as {
+      const bodyText = await res.text()
+      let data: {
         error?: string
         detail?: string
         coverLetter?: string
         driveUrl?: string | null
         notionUrl?: string | null
         warnings?: string[]
+      }
+      try {
+        data = bodyText ? (JSON.parse(bodyText) as typeof data) : {}
+      } catch {
+        if (cancelled) return
+        setError(
+          res.ok
+            ? "Unexpected response from server."
+            : `Server error (${res.status}). The app received HTML instead of JSON — check the terminal or Vercel logs for the real error.`
+        )
+        updateStep(0, "error")
+        updateStep(1, "error")
+        return
       }
 
       if (cancelled) return
