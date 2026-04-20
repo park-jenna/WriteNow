@@ -1,3 +1,5 @@
+import { PDFParse } from "pdf-parse"
+
 async function readGoogleErrorBody(res: Response): Promise<string> {
   try {
     const text = await res.text()
@@ -43,8 +45,14 @@ export async function fetchResumeText(
       `Drive ${exportRes.status}/${mediaRes.status}: ${exportHint || mediaHint || mediaRes.statusText}`.trim()
     )
   }
-
-  return mediaRes.text()
+  const buffer = Buffer.from(await mediaRes.arrayBuffer())
+  const parser = new PDFParse({ data: buffer })
+  try {
+    const { text } = await parser.getText()
+    return text
+  } finally {
+    await parser.destroy()
+  }
 }
 
 export async function saveCoverLetter(
@@ -88,3 +96,4 @@ export async function saveCoverLetter(
   if (data.id) return `https://drive.google.com/file/d/${data.id}/view`
   throw new Error("Drive save returned no link")
 }
+
