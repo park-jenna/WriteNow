@@ -1,7 +1,8 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  // pdf-parse pulls in @napi-rs/canvas; bundling it often breaks on Vercel — keep as Node externals
+  serverExternalPackages: ["pdf-parse", "@napi-rs/canvas", "pdfjs-dist"],
+}
 
-export default nextConfig;
+export default nextConfig

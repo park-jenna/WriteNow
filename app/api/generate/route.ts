@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+
+export const runtime = "nodejs"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { getResumeFileId } from "@/lib/supabase"

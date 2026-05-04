@@ -1,5 +1,3 @@
-import { PDFParse } from "pdf-parse"
-
 async function readGoogleErrorBody(res: Response): Promise<string> {
   try {
     const text = await res.text()
@@ -46,6 +44,14 @@ export async function fetchResumeText(
     )
   }
   const buffer = Buffer.from(await mediaRes.arrayBuffer())
+  let PDFParse: (typeof import("pdf-parse"))["PDFParse"]
+  try {
+    ;({ PDFParse } = await import("pdf-parse"))
+  } catch (e) {
+    throw new Error(
+      `PDF library failed to load: ${e instanceof Error ? e.message : String(e)}`
+    )
+  }
   const parser = new PDFParse({ data: buffer })
   try {
     const { text } = await parser.getText()
