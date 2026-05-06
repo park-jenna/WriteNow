@@ -67,13 +67,27 @@ export default function GeneratePage() {
       updateStep(0, "running")
       updateStep(1, "running")
 
-      const res = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
-      })
+      let res: Response
+      let bodyText: string
+      try {
+        res = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(input),
+        })
+        bodyText = await res.text()
+      } catch (err) {
+        if (cancelled) return
+        setError(
+          err instanceof Error && err.message
+            ? `Network error: ${err.message}`
+            : "Could not reach the server. Check your connection and try again."
+        )
+        updateStep(0, "error")
+        updateStep(1, "error")
+        return
+      }
 
-      const bodyText = await res.text()
       let data: {
         error?: string
         detail?: string
@@ -115,7 +129,7 @@ export default function GeneratePage() {
       updateStep(0, "done")
       updateStep(1, "done")
       updateStep(2, "running")
-
+      await new Promise((resolve) => setTimeout(resolve, 600))
       updateStep(2, "done")
       updateStep(3, data.driveUrl ? "done" : "error")
       updateStep(4, data.notionUrl ? "done" : "error")

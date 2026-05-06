@@ -44,6 +44,8 @@ export async function fetchResumeText(
     )
   }
   const buffer = Buffer.from(await mediaRes.arrayBuffer())
+  // Dynamic import: pdf-parse reads ./test/data at import time, which breaks
+  // Next.js builds when imported statically. Lazy-load only when a PDF is needed.
   let PDFParse: (typeof import("pdf-parse"))["PDFParse"]
   try {
     ;({ PDFParse } = await import("pdf-parse"))

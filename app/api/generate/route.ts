@@ -90,9 +90,6 @@ export async function POST(req: NextRequest) {
   const resumeText = resumeOutcome.value
   const companyResearch = researchOutcome.value
 
-  console.log("RESUME LENGTH:", resumeText?.length)
-  console.log("RESUME PREVIEW:", resumeText?.slice(0, 300))
-
   let coverLetter: string
   try {
     coverLetter = await generateCoverLetter({

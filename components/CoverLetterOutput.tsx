@@ -62,8 +62,7 @@ export default function CoverLetterOutput({
       {notionUrl && (
         <div className="mt-3.5 flex justify-end">
           <p className="text-[0.72rem]" style={{ color: "var(--text-muted)" }}>
-            ✓ Logged to Notion &nbsp;·&nbsp;
-            <span className="text-xs">Per-user Notion workspaces coming soon</span>
+            ✓ Logged to Notion
           </p>
         </div>
       )}
