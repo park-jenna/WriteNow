@@ -7,24 +7,7 @@ import { getResumeFileId } from "@/lib/supabase"
 import { fetchResumeText, saveCoverLetter } from "@/lib/drive"
 import { researchCompany, generateCoverLetter } from "@/lib/anthropic"
 import { logToNotion } from "@/lib/notion"
-
-function errDetail(err: unknown): string {
-  if (err instanceof Error) return err.message
-  if (typeof err === "string") return err
-  if (
-    typeof err === "object" &&
-    err !== null &&
-    "message" in err &&
-    typeof (err as { message: unknown }).message === "string"
-  ) {
-    return (err as { message: string }).message
-  }
-  return "Unknown error"
-}
-
-function devPayload(detail: string) {
-  return process.env.NODE_ENV === "development" ? { detail } : {}
-}
+import { errDetail, devPayload } from "@/lib/errors"
 
 export async function POST(req: NextRequest) {
   try {
