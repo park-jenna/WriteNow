@@ -42,17 +42,26 @@
   --font-mono: var(--font-mono), ui-monospace, monospace;
 }
 
-/* ─── Background gradient ─── */
+/* ─── Background gradient (fixed layer so backdrop-filter stays seamless on scroll) ─── */
 body {
   min-height: 100vh;
+  background-color: #05050f;
+  color: var(--text-primary);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
   background-color: #05050f;
   background-image:
     radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99, 74, 200, 0.25) 0%, transparent 60%),
     radial-gradient(ellipse 60% 50% at 80% 80%, rgba(56, 100, 220, 0.2) 0%, transparent 55%),
     radial-gradient(ellipse 50% 40% at 60% 30%, rgba(139, 92, 246, 0.12) 0%, transparent 50%);
-  color: var(--text-primary);
-  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  pointer-events: none;
 }
 
 /* ─── Reusable glass card ─── */

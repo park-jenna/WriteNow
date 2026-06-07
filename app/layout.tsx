@@ -33,9 +33,9 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${sora.variable} ${jetbrains.variable} h-full antialiased`}
+      className={`${sora.variable} ${jetbrains.variable} min-h-full antialiased`}
     >
-      <body className={`${sora.className} min-h-full flex flex-col`}>
+      <body className={`${sora.className} min-h-screen flex flex-col`}>
         <Providers session={session}>
           <AppShell>{children}</AppShell>
         </Providers>

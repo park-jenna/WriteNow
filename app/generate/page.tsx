@@ -171,7 +171,9 @@ export default function GeneratePage() {
   }
 
   return (
-    <main className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 py-10">
+    <main
+      className={`flex min-h-[calc(100vh-3.5rem)] justify-center px-4 py-10 ${result ? "" : "items-center"}`}
+    >
       <div className="w-full max-w-2xl">
         {!result ? (
           <div className="mx-auto w-full max-w-[480px] px-6 py-6">
