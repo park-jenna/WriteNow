@@ -2,42 +2,57 @@
 
 WriteNow is a web app that generates a tailored cover letter using:
 
--   your resume (pulled from **Google Drive**)
--   a short **company research** summary
--   optional job description + personal note
+- your resume (pulled from **Google Drive**)
+- a short **company research** summary (Anthropic)
+- optional job description and personal note
 
-It can also save the generated letter back to Google Drive and log a lightweight record to Notion.
+It saves the generated letter back to Google Drive and logs a record to Notion.
+
+## Screenshots
+
+**Input form**
+![Input form](docs/screenshots/input.png)
+
+**Generation in progress**
+![Generation progress](docs/screenshots/generating.png)
+
+**Generated cover letter**
+![Result](docs/screenshots/result.png)
 
 ## Live demo
 
-There is a deployed instance, but **Google OAuth access is restricted to approved test users** (Google “testing” mode / allowlist). If you don’t have access, run locally instead.
+There is a deployed instance at [write-now.vercel.app](https://write-now.vercel.app), but **Google OAuth access is restricted to approved test users** (Google "testing" mode). If you don't have access, run locally instead — setup takes about 10 minutes.
 
 ## How it works
 
-1.  **Sign in with Google** (NextAuth).
-2.  **One-time setup**: paste a Google Drive share link to your resume (`/setup`).
-3.  Enter application details on the home form.
-4.  `POST /api/generate` performs:
-    -   fetch resume text from Drive (exports Google Docs to text; falls back to downloading + parsing PDFs)
-    -   generate a short company research summary (Anthropic)
-    -   generate a cover letter (Anthropic)
-    -   save the letter to Drive (optional; best-effort)
-    -   log the run to Notion (optional; best-effort)
+1. **Sign in with Google** (NextAuth).
+2. **One-time setup**: paste a Google Drive share link to your resume (`/setup`).
+3. Enter a job title, company name, and optional job description on the home form.
+4. `POST /api/generate` runs the following pipeline:
+   - Resume fetch and company research run **concurrently** with `Promise.allSettled` to reduce latency.
+   - Cover letter generation runs after both complete.
+   - Drive save and Notion logging run as **soft failures**: the user always receives the generated letter even if secondary integrations fail, with per-step warnings returned to the client.
+5. The result page shows the letter with an option to open it in Drive.
+
+**Design decisions**
+- Resume file reference is stored in Supabase and accessed only in server-side handlers, keeping Drive tokens out of the client.
+- Hard failures (no letter produced) are separated from soft failures (Drive save, Notion log) so the core output is always delivered.
+- The generation prompt includes grounding rules to prevent the model from inventing experience not present in the resume.
 
 ## Tech stack
 
--   **Next.js App Router** (Node runtime for server routes)
--   **NextAuth** (Google OAuth)
--   **Anthropic SDK** (text generation)
--   **Google Drive API** (read resume / write letter)
--   **Supabase** (store per-user resume file id)
--   **Notion API** (optional logging)
+- **Next.js App Router** (Node runtime for server routes)
+- **NextAuth** (Google OAuth)
+- **Anthropic SDK** (company research + cover letter generation)
+- **Google Drive API** (read resume, write letter)
+- **Supabase** (per-user resume file reference, server-side only)
+- **Notion API** (optional run logging)
 
 ## Local development
 
 ### 1) Install
 
-``` bash
+```bash
 npm install
 ```
 
@@ -45,47 +60,44 @@ npm install
 
 Create `.env.local` (do not commit it). Use `.env.example` as a template.
 
-Required for core functionality:
+Required:
 
--   `NEXTAUTH_SECRET`
--   `NEXTAUTH_URL` (for local dev: `http://localhost:3000`)
--   `GOOGLE_CLIENT_ID`
--   `GOOGLE_CLIENT_SECRET`
--   `ANTHROPIC_API_KEY`
--   `NEXT_PUBLIC_SUPABASE_URL`
--   `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXTAUTH_SECRET`
+- `NEXTAUTH_URL` (local: `http://localhost:3000`)
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `ANTHROPIC_API_KEY`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
 
 Optional (enables Notion logging):
 
--   `NOTION_MCP_TOKEN`
--   `NOTION_DATABASE_ID`
+- `NOTION_MCP_TOKEN`
+- `NOTION_DATABASE_ID`
 
 Optional (model override):
 
--   `ANTHROPIC_MODEL`
+- `ANTHROPIC_MODEL`
 
-### 3) Google OAuth setup (Drive access)
+### 3) Google OAuth setup
 
 In Google Cloud Console:
 
--   Configure OAuth consent screen.
--   Create an OAuth client for a web application.
--   Add redirect URL:
-    -   `http://localhost:3000/api/auth/callback/google`
--   Ensure the app can request Drive scopes (configured in `lib/auth.ts`).
+- Configure OAuth consent screen.
+- Create an OAuth client for a web application.
+- Add redirect URL: `http://localhost:3000/api/auth/callback/google`
+- Ensure the app can request Drive scopes (configured in `lib/auth.ts`).
 
 ### 4) Supabase table
 
 Create a `users` table with at least:
 
--   `email` (text, unique)
--   `resume_file_id` (text, nullable)
-
-WriteNow stores the resume’s Drive file id per user on `/setup`.
+- `email` (text, unique)
+- `resume_file_id` (text, nullable)
 
 ### 5) Run
 
-``` bash
+```bash
 npm run dev
 ```
 
@@ -93,23 +105,19 @@ Open `http://localhost:3000`.
 
 ## Notion logging (optional)
 
-If you set `NOTION_MCP_TOKEN` and `NOTION_DATABASE_ID`, each generation can create a Notion page in your database with:
+If `NOTION_MCP_TOKEN` and `NOTION_DATABASE_ID` are set, each generation creates a Notion page with:
 
--   Job Title (title)
--   Company (rich text)
--   Email (email)
--   Date (date)
--   Status (select)
--   Drive Link (url, optional)
+- Job Title, Company, Email, Date, Status, Drive Link
 
-The app accepts `NOTION_DATABASE_ID` as a UUID, a 32-char hex id, or a pasted Notion URL and normalizes it automatically.
+The app accepts `NOTION_DATABASE_ID` as a UUID, 32-char hex id, or pasted Notion URL.
 
-## Notes & limitations
+## Notes and limitations
 
--   **Token lifecycle**: Drive requests use the Google OAuth access token. If you keep sessions around for a long time, you may need to add refresh-token handling for fully hands-off usage.
--   **Resume formats**: Google Docs export to text is preferred; PDFs are downloaded and parsed best-effort.
--   **Privacy**: the resume is fetched at generation time; avoid adding verbose server logs containing resume text in production.
+- **OAuth restriction**: the deployed instance is in Google "testing" mode. Run locally to test with your own credentials.
+- **Token lifecycle**: Drive requests use the Google OAuth access token. Long-lived sessions may need refresh-token handling.
+- **Resume formats**: Google Docs export to plain text is preferred; PDFs are downloaded and parsed best-effort.
+- **Privacy**: resume text is fetched at generation time and not persisted. Avoid verbose server logs in production.
 
 ## License
 
-All rights reserved. This project is not licensed for redistribution or commercial use.
+All rights reserved. Not licensed for redistribution or commercial use.
