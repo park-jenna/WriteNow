@@ -11,13 +11,13 @@ It saves the generated letter back to Google Drive and logs a record to Notion.
 ## Screenshots
 
 **Input form**
-![Input form](docs/screenshots/input.png)
+![Input form](public/img/input.png)
 
 **Generation in progress**
-![Generation progress](docs/screenshots/generating.png)
+![Generation progress](public/img/generating.png)
 
 **Generated cover letter**
-![Result](docs/screenshots/result.png)
+![Result](public/img/result.png)
 
 ## Live demo
 
